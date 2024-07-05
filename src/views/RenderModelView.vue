@@ -2,7 +2,7 @@
   import { ref, onMounted, onUnmounted } from 'vue';
   import * as THREE from 'three';
   import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
   
   // Referencia al div donde se montará el renderizador
   const modelo = ref(null);
@@ -11,7 +11,7 @@
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('rgb(178,201,158)');
   
-    const camera = new THREE.PerspectiveCamera(50, 9, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(50, modelo.value.clientWidth/ modelo.value.clientHeight, 1, 1000);
     const renderer = new THREE.WebGLRenderer();
     
     // Ajustar el tamaño del renderizador al tamaño del div
@@ -21,7 +21,6 @@
         const height = modelo.value.clientHeight;
         renderer.setSize(width, height);
         camera.aspect = width / height;
-        camera.updateProjectionMatrix();
       }
     };
     
@@ -46,27 +45,31 @@
     // Cargar modelo GLTF
     loader.load('src/models/cube.glb', function (gltf) {
       const model = gltf.scene;
-      model.rotation.x += 1.90;
-      model.rotation.z += -0.45;
-      model.position.set(0, 0, -20);
+      model.position.set(-1, -3, 0);
       scene.add(model);
       // console.log('Modelo cargado y añadido a la escena:', model); // Mensaje de consola para depuración
     }, undefined, function (error) {
       console.error(error);
     });
-  
-    // camera.position.z = 5;
-    const controls = new OrbitControls(camera, renderer.domElement);
-  
+    
+    const controls = new OrbitControls( camera, renderer.domElement );
+    camera.position.set( 0, 0, 12 );
+    controls.update();
     function animate() {
-      renderer.render(scene, camera);
+
+      requestAnimationFrame( animate );
+
+      // required if controls.enableDamping or controls.autoRotate are set to true
       controls.update();
+
+      renderer.render( scene, camera );
+
     }
-    renderer.setAnimationLoop(animate);
-  
+    animate()
     // Ajustar el tamaño del renderizador al cambiar el tamaño de la ventana
     const handleResize = () => {
       setRendererSize();
+      renderer.render( scene, camera );
     };
     window.addEventListener('resize', handleResize);
   
@@ -78,7 +81,7 @@
 
 
 <template>
-    <div id="modelo" ref="modelo" class="h-64">
+    <div id="modelo" ref="modelo" class=" h-96">
       
     </div>
 </template>

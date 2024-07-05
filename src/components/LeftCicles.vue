@@ -6,26 +6,15 @@
   const canvaStore = useCanvaStore()
   const orbsStore = useOrbStore()
 
-  const angle = ref(canvaStore.degreesToRadians(105));
+  const angle = ref(canvaStore.degreesToRadians(75));
   const initialAngle = ref(0);
   
+  const radiusOrbita = 410; // Radio de la órbita
   const stopAngle = ref(0);
-
-  let xOrb
-  let yOrb
   
-  // setEjes() 
-  // console.log(puntoY)
-
   const dibujaOrbes = () => {
-    // Calcular la nueva posición del orbe
 
 
-    // Dibujar el orbe
-    // canvaStore.dibujarOrbe(xOrb, yOrb)
-    // angle.value += canvaStore.degreesToRadians(15)
-    // setEjes();
-    
     // Actualizar el ángulo y detener la animación si ha recorrido 60 grados
     // angle.value += canvaStore.degreesToRadians(1)
     if (angle.value >= stopAngle.value) {
