@@ -1,46 +1,79 @@
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useOrbStore = defineStore('orbs', () => {
     
-  const cube = ref(null)
-  cube.value = {
+  const locationsDefines = ref(null)
+  locationsDefines.value = {
     frontal: [
-      [{ x: 600, y: 390, valor_original: null, valor_actual: null }, { x: 665, y: 428, valor_original: null, valor_actual: null }, { x: 720, y: 476, valor_original: null, valor_actual: null }],
-      [{ x: 535, y: 428, valor_original: null, valor_actual: null }, { x: 600, y: 458, valor_original: null, valor_actual: null }, { x: 655, y: 497, valor_original: null, valor_actual: null }],
-      [{ x: 480, y: 476, valor_original: null, valor_actual: null }, { x: 545, y: 497, valor_original: null, valor_actual: null }, { x: 600, y: 530, valor_original: null, valor_actual: null }]
+      [{ x: 600, y: 390,   }, { x: 665, y: 428,   }, { x: 720, y: 476,   }],
+      [{ x: 535, y: 428,   }, { x: 600, y: 458,   }, { x: 655, y: 497,   }],
+      [{ x: 480, y: 476,   }, { x: 545, y: 497,   }, { x: 600, y: 530,   }]
     ],
     trasera: [
-      [{ x: 480, y: 1043, valor_original: null, valor_actual: null }, { x: 545, y: 1022, valor_original: null, valor_actual: null }, { x: 600, y: 990, valor_original: null, valor_actual: null }],
-      [{ x: 535, y: 1091, valor_original: null, valor_actual: null }, { x: 600, y: 1061, valor_original: null, valor_actual: null }, { x: 655, y: 1022, valor_original: null, valor_actual: null }],
-      [{ x: 600, y: 1129, valor_original: null, valor_actual: null }, { x: 665, y: 1091, valor_original: null, valor_actual: null }, { x: 720, y: 1043, valor_original: null, valor_actual: null }]
+      [{ x: 480, y: 1043,   }, { x: 545, y: 1022,   }, { x: 600, y: 990,   }],
+      [{ x: 535, y: 1091,   }, { x: 600, y: 1061,   }, { x: 655, y: 1022,   }],
+      [{ x: 600, y: 1129,   }, { x: 665, y: 1091,   }, { x: 720, y: 1043,   }]
     ],
     superior: [
-      [{ x: 1008, y:419, valor_original: null, valor_actual: null }, { x: 1007, y: 494, valor_original: null, valor_actual: null }, { x: 994, y: 566, valor_original: null, valor_actual: null }],
-      [{ x: 942, y: 382, valor_original: null, valor_actual: null }, { x: 949, y: 453, valor_original: null, valor_actual: null }, { x: 943, y: 520, valor_original: null, valor_actual: null }],
-      [{ x: 874, y: 358, valor_original: null, valor_actual: null }, { x: 888, y: 425, valor_original: null, valor_actual: null }, { x: 887, y: 489, valor_original: null, valor_actual: null }]
+      [{ x: 1008, y:419,   }, { x: 1007, y: 494,   }, { x: 994, y: 566,   }],
+      [{ x: 942, y: 382,   }, { x: 949, y: 453,   }, { x: 943, y: 520,   }],
+      [{ x: 874, y: 358,   }, { x: 888, y: 425,   }, { x: 887, y: 489,   }]
     ],
     inferior: [
-      [{ x: 386, y: 642, valor_original: null, valor_actual: null }, { x: 436, y: 687, valor_original: null, valor_actual: null }, { x: 492, y: 719, valor_original: null, valor_actual: null }],
-      [{ x: 372, y: 713, valor_original: null, valor_actual: null }, { x: 430, y: 755, valor_original: null, valor_actual: null }, { x: 491, y: 783, valor_original: null, valor_actual: null }],
-      [{ x: 371, y: 788, valor_original: null, valor_actual: null }, { x: 437, y: 825, valor_original: null, valor_actual: null }, { x: 505, y: 850, valor_original: null, valor_actual: null }]
+      [{ x: 386, y: 642,   }, { x: 436, y: 687,   }, { x: 492, y: 719,   }],
+      [{ x: 372, y: 713,   }, { x: 430, y: 755,   }, { x: 491, y: 783,   }],
+      [{ x: 371, y: 788,   }, { x: 437, y: 825,   }, { x: 505, y: 850,   }]
     ],
     izquierda: [
-      [{ x: 191, y: 419, valor_original: null, valor_actual: null }, { x: 257, y: 382, valor_original: null, valor_actual: null }, { x: 325, y: 358, valor_original: null, valor_actual: null }],
-      [{ x: 192, y: 494, valor_original: null, valor_actual: null }, { x: 249, y: 453, valor_original: null, valor_actual: null }, { x: 311, y: 425, valor_original: null, valor_actual: null }],
-      [{ x: 205, y: 566, valor_original: null, valor_actual: null }, { x: 256, y: 520, valor_original: null, valor_actual: null }, { x: 312, y: 489, valor_original: null, valor_actual: null }]
+      [{ x: 191, y: 419,   }, { x: 257, y: 382,   }, { x: 325, y: 358,   }],
+      [{ x: 192, y: 494,   }, { x: 249, y: 453,   }, { x: 311, y: 425,   }],
+      [{ x: 205, y: 566,   }, { x: 256, y: 520,   }, { x: 312, y: 489,   }]
     ],
     derecha: [
-      [{ x: 814, y: 642, valor_original: null, valor_actual: null }, { x: 827, y: 713, valor_original: null, valor_actual: null }, { x: 828, y: 788, valor_original: null, valor_actual: null }],
-      [{ x: 763, y: 687, valor_original: null, valor_actual: null }, { x: 770, y: 755, valor_original: null, valor_actual: null }, { x: 762, y: 825, valor_original: null, valor_actual: null }],
-      [{ x: 707, y: 719, valor_original: null, valor_actual: null }, { x: 708, y: 783, valor_original: null, valor_actual: null }, { x: 694, y: 850, valor_original: null, valor_actual: null }]
+      [{ x: 814, y: 642,   }, { x: 827, y: 713,   }, { x: 828, y: 788,   }],
+      [{ x: 763, y: 687,   }, { x: 770, y: 755,   }, { x: 762, y: 825,   }],
+      [{ x: 707, y: 719,   }, { x: 708, y: 783,   }, { x: 694, y: 850,   }]
     ]
   };
-  
-  // console.log(cube);
+
+  const orbs = ref([]);
+
+  const addPoint = point => {
+    orbs.value.push(point)
+  }
+
+  const inRange = (x, y) => {
+    const ran = 20;
+    return orbs.value.findIndex(point => {
+      return (
+        x >= point.x - ran && x <= point.x + ran &&
+        y >= point.y - ran && y <= point.y + ran
+      );
+    });
+  };
+
+  function getLocationOriginal(index){
+    let path = orbs.value[index].path
+    const expr = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+    let loc = locationsDefines.value;
+
+    for (let i = 0; i < expr.length; i++) {
+      loc = loc[expr[i]];
+    }
+    
+    return loc;
+    // console.log(locationsDefines.value.frontal[0][0])
+  }
+
+  // console.log(locationsDefines);
   
 
     return { 
-      cube
+      locationsDefines,
+      orbs,
+      addPoint,
+      inRange,
+      getLocationOriginal,
     }
-})    
+})

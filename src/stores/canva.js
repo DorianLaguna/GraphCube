@@ -9,14 +9,13 @@ export const useCanvaStore = defineStore('canva', () => {
   const mathStore = useMathStore()
   const canvas = ref(null);
   const ctx = ref(null)
-  const locationOrbs = ref([])
   const pi =  Math.PI;
   const radiusOrbita = 410; // Radio de la órbita
 
   const isDragging = ref(false)
   const xMouse = ref(0)
   const yMouse = ref(0)
-  const pointReference = ref(null)
+  const indexPointDragging = ref(null)
   const pivots = ref([])
 
   const centerX = ref({
@@ -38,7 +37,7 @@ export const useCanvaStore = defineStore('canva', () => {
         // Event listeners para el arrastre
     iniciarEventos()
     dibujaOrbitas()
-    dibujarOrbesAll()
+    dibujarOrbesAllStart()
 
   }
 
@@ -67,15 +66,22 @@ export const useCanvaStore = defineStore('canva', () => {
   }
 
   function dibujarOrbesAll(){
+    ctx.value.clearRect(0, 0, canvas.value.width, canvas.value.height);
+    dibujaOrbitas()
+        orbStore.orbs.forEach((punto, puntoIndex) => {
+          dibujarOrbe(punto.x, punto.y, punto.color);
+        });
+
+  }
+  function dibujarOrbesAllStart(){
     const colors = ["red","orange","white","yellow", "blue","green"]
     let i = 0
-    Object.entries(orbStore.cube).forEach(([caraName, cara]) => {
+    Object.entries(orbStore.locationsDefines).forEach(([caraName, cara]) => {
       let color = colors[i]
       cara.forEach((columna, columnaIndex) => {
         columna.forEach((punto, puntoIndex) => {
           const path = `${caraName}[${columnaIndex}][${puntoIndex}]`;
-          const id = `${caraName}-${columnaIndex}-${puntoIndex}`;
-          locationOrbs.value.push({x: punto.x, y: punto.y, path, id});
+          orbStore.addPoint({x: punto.x, y: punto.y, path, color});
           dibujarOrbe(punto.x, punto.y, color);
         });
       });
@@ -113,33 +119,52 @@ export const useCanvaStore = defineStore('canva', () => {
       distancias.push(mathStore.calculateDistance(pointData.x, pointData.y, centerX.value[centro], centerY.value[centro]));
     });
     
+    //define pivots can be use
     let alejado = mathStore.findNumberFar(distancias)
     centros.splice(alejado, 1);
     pivots.value.push({x:centerX.value[centros[0]],y:centerY.value[centros[0]]})
     pivots.value.push({x:centerX.value[centros[1]],y:centerY.value[centros[1]]})
   }
 
+  function findPivot(xOriginal,yOriginal){
+
+    let distanceToRadio1 = mathStore.calculateDistance(xOriginal,yOriginal, pivots.value[0].x,pivots.value[0].y)
+    let distanceToRadio2 = mathStore.calculateDistance(xOriginal,yOriginal, pivots.value[1].x, pivots.value[1].y)
+    
+    let distanceToMouse1 = mathStore.calculateDistance(xMouse.value,yMouse.value, pivots.value[0].x,pivots.value[0].y)
+    let distanceToMouse2 = mathStore.calculateDistance(xMouse.value,yMouse.value, pivots.value[1].x, pivots.value[1].y)
+    
+    let distance1 = Math.abs(distanceToMouse1 - distanceToRadio1);
+    let distance2 = Math.abs(distanceToMouse2 - distanceToRadio2);
+
+    if(distance1 < distance2){
+      return {
+        x: pivots.value[0].x,
+        y: pivots.value[0].y,
+        distance:distanceToRadio1 
+      }
+    }else{
+      return {
+        x: pivots.value[1].x,
+        y: pivots.value[1].y,
+        distance:distanceToRadio2 
+      }
+    }
+  }
+
   // FUNCIONES DE EVENTOS
   function iniciarArrastre(event) {
     setLocationMouse(event);
-    const range = 20;
 
     // Buscar si hay algún punto dentro del rango que el usuario está arrastrando
-    const pointWithinRange = locationOrbs.value.find(point => {
-      return (
-        xMouse.value >= point.x - range && xMouse.value <= point.x + range &&
-        yMouse.value >= point.y - range && yMouse.value <= point.y + range
-      );
-    });
+    const index = orbStore.inRange(xMouse.value, yMouse.value)
 
-    if (pointWithinRange) {
+    if (index >= 0) {
       isDragging.value = true;
-      pointReference.value = pointWithinRange.path;
+      indexPointDragging.value = index;
       // Obtener la información del punto de referencia en el cubo
-      const pathParts = pointReference.value.split(/[\[\]\.]+/).filter(Boolean);
-      const pointData = pathParts.reduce((acc, part) => acc[part], orbStore.cube);
-      // Calcular y establecer los pivotes más cercanos
-      pointReference.value = pointData
+      let pointData = orbStore.getLocationOriginal(indexPointDragging.value)
+      
       setPivotes(pointData);
     }
   }
@@ -148,21 +173,26 @@ export const useCanvaStore = defineStore('canva', () => {
   function moverCirculo(event) {
       if (isDragging.value) {
         setLocationMouse(event)
-        let x = pointReference.value.x
-        let y = pointReference.value.y
+
+        let location = orbStore.getLocationOriginal(indexPointDragging.value)
+        let x = orbStore.orbs[indexPointDragging.value].x 
+        let y = orbStore.orbs[indexPointDragging.value].y
+
 
         //define pivote
-        // pivot = 
+        let pivot = findPivot(location.x,location.y)
+
+        console.log(pivot)
 
 
         //get initial angule regard to pivote
-        let angle = mathStore.calculateAngle(centerX.value.right, centerY.value.right,x,y);
+        let angle = mathStore.calculateAngle(pivot.x, pivot.y,x,y);
         angle -= 3
         
+        let coordinates = mathStore.calculateCoordinates(pivot.x, pivot.y, pivot.distance , angle)
         //define new coordinates of pointMoving
-        let coordinates = mathStore.calculateCoordinates(centerX.value.right, centerY.value.right, 410 , angle)
-        pointReference.value.x = coordinates.x;
-        pointReference.value.y = coordinates.y;
+        orbStore.orbs[indexPointDragging.value].y = coordinates.y;
+        orbStore.orbs[indexPointDragging.value].x = coordinates.x;
 
         dibujarOrbesAll()
       }
