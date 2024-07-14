@@ -70,11 +70,11 @@ export const useMathStore = defineStore('math', () => {
       
       if(x == 420 && y == 760){ //izquierda
         if(distance < 300){
-          return 4
+          return 6
         }else if(distance < 360){
           return 5
         }else{
-          return 6
+          return 4
         }
       }else if( x == 600 && y == 448){ //top
         if(distance < 300){
@@ -93,6 +93,13 @@ export const useMathStore = defineStore('math', () => {
           return 1
         }
       }
+    }
+    function sumAngleToLocation(x, y, angleRelative, pivot){
+      let angle = calculateAngle(pivot.x, pivot.y, x, y)
+      angle += angleRelative;
+      let distance = calculateDistance(pivot.x, pivot.y, x, y)
+      let newCoordinates = calculateCoordinates(pivot.x, pivot.y, distance, angle)
+      return newCoordinates
     }
     function cartesianToPolar(x, y, originX = 0, originY = 0) {
         // Ajustar las coordenadas al nuevo origen
@@ -129,5 +136,6 @@ export const useMathStore = defineStore('math', () => {
     calculateCoordinates,
     calculateAngleRelative,
     getCircle,
+    sumAngleToLocation,
   }
 })

@@ -151,6 +151,19 @@ export const useCanvaStore = defineStore('canva', () => {
       }
     }
   }
+  function rotateOthersOrbs(circle,  pivot, angleRelative){
+    console.log(circle)
+    orbStore.orbs.forEach(orb => {
+      if(orb.cir1 == circle || orb.cir2 == circle) {
+        console.log(orb.cir1, orb.cir2)
+        let location = orbStore.getLocationOriginal(0, orb.path)
+        let newLocation = mathStore.sumAngleToLocation(location.x, location.y, angleRelative, pivot)
+        orb.x = newLocation.x
+        orb.y = newLocation.y
+        // console.log(newLocation)
+      }
+    });
+  }
 
   // FUNCIONES DE EVENTOS
   function iniciarArrastre(event) {
@@ -184,7 +197,8 @@ export const useCanvaStore = defineStore('canva', () => {
         let angleRelative = mathStore.calculateAngleRelative(pivot.x, pivot.y, xMouse.value,yMouse.value,location.x,location.y)
 
         let circle = mathStore.getCircle(pivot)
-        console.log(circle)
+        
+        rotateOthersOrbs(circle, pivot, angleRelative)
         
         
         let coordinates = mathStore.calculateCoordinates(pivot.x, pivot.y, pivot.distance , angleAbsolute)

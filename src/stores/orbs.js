@@ -54,9 +54,12 @@ export const useOrbStore = defineStore('orbs', () => {
     });
   };
 
-  function getLocationOriginal(index){
-    let path = orbs.value[index].path
-    const expr = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+  function getLocationOriginal(index, path = null){
+    let pathRead = path
+    if(!pathRead){
+      pathRead = orbs.value[index].path
+    }
+    const expr = pathRead.replace(/\[(\d+)\]/g, '.$1').split('.');
     let loc = locationsDefines.value;
 
     for (let i = 0; i < expr.length; i++) {
