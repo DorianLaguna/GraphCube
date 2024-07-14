@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import dataJson from "@/intersection.json"
 
 export const useOrbStore = defineStore('orbs', () => {
     
@@ -66,6 +67,17 @@ export const useOrbStore = defineStore('orbs', () => {
     // console.log(locationsDefines.value.frontal[0][0])
   }
 
+  function setIntersection(){
+    for(let i = 0; i < dataJson.length; i++){
+      orbs.value[i].cir1 = dataJson[i].cir1
+      orbs.value[i].cir2 = dataJson[i].cir2
+    }
+  }
+
+  function spin(circle){
+    
+  }
+
   // console.log(locationsDefines);
   
 
@@ -75,5 +87,6 @@ export const useOrbStore = defineStore('orbs', () => {
       addPoint,
       inRange,
       getLocationOriginal,
+      setIntersection,
     }
 })

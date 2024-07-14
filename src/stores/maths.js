@@ -42,22 +42,57 @@ export const useMathStore = defineStore('math', () => {
         const deltaX = pointX - centerX;
         const deltaY = pointY - centerY;
         let angle = radiansToDegrees(Math.atan2(deltaY, deltaX));
-        
-        // Convert angle to the range [0, 360]
-        angle = (angle < 0) ? (360 + angle) : angle;
-        
-        // Ensure angle is in the range [0, 360]
-        if (angle === 360) {
-            angle = 0;
-        }
     
         return angle;
+    }
+    function calculateAngleRelative(centerX, centerY, point1X, point1Y, point2X, point2Y) {
+        const delta1X = point1X - centerX;
+        const delta1Y = point1Y - centerY;
+        let angle1 = radiansToDegrees(Math.atan2(delta1Y, delta1X));
+
+        const delta2X = point2X - centerX;
+        const delta2Y = point2Y - centerY;
+        let angle2 = radiansToDegrees(Math.atan2(delta2Y, delta2X));
+    
+        return angle1 - angle2;
     }
     function calculateCoordinates(centerX, centerY, radius, angle) {
       const radians = degreesToRadians(angle);
       const pointX = centerX + radius * Math.cos(radians);
       const pointY = centerY + radius * Math.sin(radians);
       return { x: pointX, y: pointY };
+    }
+    function getCircle(pivot){
+    
+      let distance = pivot.distance
+      let x = pivot.x
+      let y = pivot.y
+      
+      if(x == 420 && y == 760){ //izquierda
+        if(distance < 300){
+          return 4
+        }else if(distance < 360){
+          return 5
+        }else{
+          return 6
+        }
+      }else if( x == 600 && y == 448){ //top
+        if(distance < 300){
+          return 9
+        }else if(distance < 360){
+          return 8
+        }else{
+          return 7
+        }
+      }else{   //right
+        if(distance < 300){
+          return 3
+        }else if(distance < 360){
+          return 2
+        }else{
+          return 1
+        }
+      }
     }
     function cartesianToPolar(x, y, originX = 0, originY = 0) {
         // Ajustar las coordenadas al nuevo origen
@@ -92,5 +127,7 @@ export const useMathStore = defineStore('math', () => {
     findNumberFar,
     calculateAngle,
     calculateCoordinates,
+    calculateAngleRelative,
+    getCircle,
   }
 })

@@ -81,13 +81,13 @@ export const useCanvaStore = defineStore('canva', () => {
       cara.forEach((columna, columnaIndex) => {
         columna.forEach((punto, puntoIndex) => {
           const path = `${caraName}[${columnaIndex}][${puntoIndex}]`;
-          orbStore.addPoint({x: punto.x, y: punto.y, path, color});
+          orbStore.addPoint({x: punto.x, y: punto.y, path, color, caraName});
           dibujarOrbe(punto.x, punto.y, color);
         });
       });
       i++;
     });
-
+    orbStore.setIntersection()
   }
 
   function dibujarOrbe(x, y, color){
@@ -175,21 +175,19 @@ export const useCanvaStore = defineStore('canva', () => {
         setLocationMouse(event)
 
         let location = orbStore.getLocationOriginal(indexPointDragging.value)
-        let x = orbStore.orbs[indexPointDragging.value].x 
-        let y = orbStore.orbs[indexPointDragging.value].y
-
-
         //define pivote
         let pivot = findPivot(location.x,location.y)
 
-        console.log(pivot)
-
-
         //get initial angule regard to pivote
-        let angle = mathStore.calculateAngle(pivot.x, pivot.y,x,y);
-        angle -= 3
+        let angleAbsolute = mathStore.calculateAngle(pivot.x, pivot.y, xMouse.value,yMouse.value);
+
+        let angleRelative = mathStore.calculateAngleRelative(pivot.x, pivot.y, xMouse.value,yMouse.value,location.x,location.y)
+
+        let circle = mathStore.getCircle(pivot)
+        console.log(circle)
         
-        let coordinates = mathStore.calculateCoordinates(pivot.x, pivot.y, pivot.distance , angle)
+        
+        let coordinates = mathStore.calculateCoordinates(pivot.x, pivot.y, pivot.distance , angleAbsolute)
         //define new coordinates of pointMoving
         orbStore.orbs[indexPointDragging.value].y = coordinates.y;
         orbStore.orbs[indexPointDragging.value].x = coordinates.x;
