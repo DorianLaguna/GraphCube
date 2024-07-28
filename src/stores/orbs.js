@@ -1,8 +1,11 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import dataJson from "@/intersection.json"
+import { useCanvaStore } from './canva';
 
 export const useOrbStore = defineStore('orbs', () => {
+
+  const canvaStore = useCanvaStore()
     
   const locationsDefines = ref(null)
   locationsDefines.value = {
@@ -54,6 +57,30 @@ export const useOrbStore = defineStore('orbs', () => {
     });
   };
 
+  function setBackLocations(circle) {
+    orbs.value.forEach(orb => {
+      if (orb.cir1 === circle || orb.cir2 === circle) {
+        // console.log('Antes de asignar:', orb.x);
+        orb.x = orb.xOrig;
+        orb.y = orb.yOrig;
+        // console.log('Después de asignar:', orb.x);
+        console.log('Orb final:', orb);
+      }
+    });
+  }
+
+  function setLocationsIfCicleChange(cicle){
+    if(canvaStore.cicleActual == null){
+      canvaStore.setCicleActual(cicle)
+      return;
+    }
+    if(canvaStore.cicleActual != cicle){
+      setBackLocations(canvaStore.cicleActual)
+      canvaStore.setCicleActual(cicle)
+      console.log("es diferente")
+    }
+  }
+
   function getLocationOriginal(index, path = null){
     let pathRead = path
     if(!pathRead){
@@ -91,5 +118,7 @@ export const useOrbStore = defineStore('orbs', () => {
       inRange,
       getLocationOriginal,
       setIntersection,
+      setBackLocations,
+      setLocationsIfCicleChange,
     }
 })
