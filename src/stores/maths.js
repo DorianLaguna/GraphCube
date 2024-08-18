@@ -15,6 +15,24 @@ export const useMathStore = defineStore('math', () => {
     function calculateDistance(x1,y1, x2,y2){
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
+
+    function findClosestIndex(arr, targetPoint) {
+      // Calcula la distancia entre el promedio y el punto objetivo para cada subarreglo
+      let minDistance = Infinity;
+      let closestIndex = -1;
+      arr.forEach((subArray, index) => {
+          const average = subArray.average;
+
+          const distance = calculateDistance(average.x, average.y, targetPoint.x, targetPoint.y);
+  
+          if (distance < minDistance) {
+              minDistance = distance;
+              closestIndex = index;
+          }
+      });
+  
+      return closestIndex;
+  }
     
     function findNumberFar(distancias){
         // Calculate the absolute distances between each pair of numbers
@@ -62,6 +80,79 @@ export const useMathStore = defineStore('math', () => {
       const pointY = centerY + radius * Math.sin(radians);
       return { x: pointX, y: pointY };
     }
+    function groupAndSortByAngle(data) {
+      // Dividir en conjuntos de 3
+      let groups = [];
+      for (let i = 0; i < data.length; i += 3) {
+        let group = data.slice(i, i + 3);
+        // Ordenar cada conjunto por ángulo
+        group.sort((a, b) => a.angule - b.angule);
+        groups.push(group);
+      }
+      // Combinar los conjuntos ordenados en una sola lista
+      return groups.flat();
+    }
+    // Función para encontrar el par más cercano a un punto dado
+    function findClosestPair(points, index) {
+      let closestPair = [];
+      let minDistance1 = Infinity, minDistance2 = Infinity;
+      let closestIndex1, closestIndex2;
+  
+      for (let i = 0; i < points.length; i++) {
+          if (i !== index) {
+              let distance = calculateDistance(points[index].x, points[index].y, points[i].x, points[i].y);
+              if (distance < minDistance1) {
+                  minDistance2 = minDistance1;
+                  closestIndex2 = closestIndex1;
+                  minDistance1 = distance;
+                  closestIndex1 = i;
+              } else if (distance < minDistance2) {
+                  minDistance2 = distance;
+                  closestIndex2 = i;
+              }
+          }
+      }
+      closestPair.push(points[closestIndex1], points[closestIndex2]);
+      return closestPair;
+  }
+
+    // Función para agrupar los puntos en conjuntos de tres
+    function groupPointsInTriplets(points) {
+      let triplets = [];
+      let usedIndices = new Set();
+
+      while (usedIndices.size < points.length) {
+          let currentIndex = 0;
+          while (usedIndices.has(currentIndex)) {
+              currentIndex++;
+          }
+          
+          let currentPoint = points[currentIndex];
+          let closestPair = findClosestPair(points, currentIndex);
+          let triplet = [currentPoint, ...closestPair];
+          
+          triplets.push(triplet);
+          usedIndices.add(currentIndex);
+          usedIndices.add(points.indexOf(closestPair[0]));
+          usedIndices.add(points.indexOf(closestPair[1]));
+      }
+
+      return triplets;
+    }
+    function calculateAveragePoint(triplet) {
+      let x = 0;
+      let y = 0;
+      triplet.forEach(point => {
+        x += point.x;
+        y += point.y;
+      });
+      
+      let averageX = x / 3
+      let averageY = y / 3
+
+      return {x:averageX, y: averageY};
+    }
+
     function getCircle(pivot){
     
       let distance = pivot.distance
@@ -93,6 +184,25 @@ export const useMathStore = defineStore('math', () => {
           return 1
         }
       }
+    }
+    function getPivotFromCicle(circle){
+      let pivot = { x: 0, y: 0, distance: 0 };
+
+      if ([6, 5, 4].includes(circle)) {
+        pivot.x = 420;
+        pivot.y = 760;
+      } else if ([9, 8, 7].includes(circle)) {
+        pivot.x = 600;
+        pivot.y = 448;
+      } else if ([3, 2, 1].includes(circle)) {
+        pivot.x = 780;
+        pivot.y = 760;
+      } else {
+        console.error("Círculo no reconocido");
+        return pivot;
+      }
+
+      return pivot;
     }
     function sumAngleToLocation(x, y, angleRelative, pivot){
       let angle = calculateAngle(pivot.x, pivot.y, x, y)
@@ -137,5 +247,10 @@ export const useMathStore = defineStore('math', () => {
     calculateAngleRelative,
     getCircle,
     sumAngleToLocation,
+    getPivotFromCicle,
+    groupAndSortByAngle,
+    groupPointsInTriplets,
+    calculateAveragePoint,
+    findClosestIndex
   }
 })

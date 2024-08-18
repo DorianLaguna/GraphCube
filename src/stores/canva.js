@@ -19,6 +19,7 @@ export const useCanvaStore = defineStore('canva', () => {
   const pivots = ref([]);
 
   const cicleActual = ref(null);
+  const orbsMoving = ref(null);
 
   const centerX = ref({
     left: 420,
@@ -142,9 +143,7 @@ export const useCanvaStore = defineStore('canva', () => {
   }
 
   function setCicleActual(cicle){
-    console.log("cambio circulo a ", cicle)
     cicleActual.value = cicle
-    console.log(cicleActual.value)
   }
 
   function findPivot(xOriginal, yOriginal) {
@@ -173,14 +172,18 @@ export const useCanvaStore = defineStore('canva', () => {
   }
 
   function rotateOthersOrbs(circle, pivot, angleRelative) {
-    orbStore.orbs.forEach(orb => {
+    
+    orbStore.orbs.forEach((orb, index) => {
       if (orb.cir1 === circle || orb.cir2 === circle) {
-        let location = orbStore.getLocationOriginal(0, orb.path);
+        console.log(orb)
+        let location = orbStore.getLocationOriginal(index);
         let newLocation = mathStore.sumAngleToLocation(location.x, location.y, angleRelative, pivot);
         orb.x = newLocation.x;
         orb.y = newLocation.y;
       }
     });
+    console.log("termina foreach")
+
   }
 
   // FUNCIONES DE EVENTOS
@@ -206,6 +209,7 @@ export const useCanvaStore = defineStore('canva', () => {
       setLocationMouse(event);
 
       let location = orbStore.getLocationOriginal(indexPointDragging.value);
+      // console.log(location)
       //define pivote
       let pivot = findPivot(location.x, location.y);
 
@@ -219,6 +223,8 @@ export const useCanvaStore = defineStore('canva', () => {
       orbStore.setLocationsIfCicleChange(circle)
       
       rotateOthersOrbs(circle, pivot, angleRelative);
+
+      orbsMoving.value = getOrbsMoving(circle)
       
       let coordinates = mathStore.calculateCoordinates(pivot.x, pivot.y, pivot.distance, angleAbsolute);
       //define new coordinates of pointMoving
@@ -229,15 +235,30 @@ export const useCanvaStore = defineStore('canva', () => {
     }
   }
 
+  function getOrbsMoving(circle){
+    const indexes = orbStore.orbs.map((orb, index) => {
+      if (orb.cir1 === circle || orb.cir2 === circle) {
+        return index;
+      }
+      return -1;
+    }).filter(index => index !== -1);
+    return indexes;
+  }
+
   function defineLocationOrbs(){
 
   }
 
   // Función para manejar el fin del arrastre
   function finalizarArrastre() {
+    if (isDragging.value) {
+      orbStore.OrderOrbs(indexPointDragging.value, orbsMoving.value, cicleActual.value, xMouse.value,yMouse.value);
+      dibujarOrbesAll()
+    }
     isDragging.value = false;
-    defineLocationOrbs();
     pivots.value = [];
+    orbsMoving.value = null;
+    cicleActual.value = null;
     console.log("Fin del arrastre");
   }
 
@@ -249,5 +270,6 @@ export const useCanvaStore = defineStore('canva', () => {
     cicleActual,
     setCicleActual,
     dibujarOrbesAll,
+    dibujarOrbe,
   }
 })

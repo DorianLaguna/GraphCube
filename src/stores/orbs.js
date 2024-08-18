@@ -2,10 +2,12 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import dataJson from "@/intersection.json"
 import { useCanvaStore } from './canva';
+import { useMathStore } from './maths';
 
 export const useOrbStore = defineStore('orbs', () => {
 
   const canvaStore = useCanvaStore()
+  const mathStore = useMathStore();
     
   const locationsDefines = ref(null)
   locationsDefines.value = {
@@ -60,13 +62,160 @@ export const useOrbStore = defineStore('orbs', () => {
   function setBackLocations(circle) {
     orbs.value.forEach(orb => {
       if (orb.cir1 === circle || orb.cir2 === circle) {
-        // console.log('Antes de asignar:', orb.x);
         orb.x = orb.xOrig;
         orb.y = orb.yOrig;
-        // console.log('Después de asignar:', orb.x);
-        console.log('Orb final:', orb);
       }
     });
+  }
+
+  function OrderOrbs(indexDragging, indexOrbs, cicle, mouseX, mouseY){
+    let values = []
+    let locations = []
+    
+    indexOrbs.forEach(index => {
+      locations.push({
+        x: orbs.value[index].xOrig,
+        y: orbs.value[index].yOrig,
+        index: index,
+        distante: mathStore.calculateDistance(orbs.value[index].xOrig,orbs.value[index].yOrig, mouseX,mouseY)
+      })
+      values.push({
+        index:index,
+        x: orbs.value[index].xOrig,
+        y: orbs.value[index].yOrig,
+        cir1: orbs.value[index].cir1,
+        cir2: orbs.value[index].cir2,
+      })
+    });
+    // Función para ordenar por distancia
+    locations.sort((a, b) => a.distante - b.distante);
+
+    let datos = mathStore.groupPointsInTriplets(values)
+
+    //obtener angulo promedio y crear arreglo respecto a eso
+    let pivot = mathStore.getPivotFromCicle(cicle)
+    let valores = reorderArray(datos, indexDragging, pivot)
+    console.log(datos)
+
+    
+    let IndexNearest = mathStore.findClosestIndex(valores,{x:mouseX, y:mouseY})
+
+    //cambiar las ubicaciones originales
+    let newCoordinates = rotateCoordinates(valores, IndexNearest)
+
+    newCoordinates.forEach(subArray => {
+      subArray.forEach(orb => {
+        const indice = orb.index
+        console.log(orbs.value[indice])
+        orbs.value[indice].x = orb.x;
+        orbs.value[indice].y = orb.y;
+        orbs.value[indice].xOrig = orb.x;
+        orbs.value[indice].yOrig = orb.y;
+        orbs.value[indice].cir1 = orb.cir1;
+        orbs.value[indice].cir2 = orb.cir2;
+      })
+    })
+
+    
+    // let i = 0
+    // newCoordinates.forEach(s => {
+    //   let colores = ['purple', 'red', 'green', 'black']
+    //   canvaStore.dibujarOrbe(s.average.x, s.average.y, colores[i])
+    //   i++
+    // })
+
+    let direction = getLocationMovement(indexDragging, valores[IndexNearest], pivot)
+
+    //girarlos mientras se pintan
+    // while(){
+
+    // }
+  
+  }
+
+  function rotateCoordinates(arr, targetIndex) {
+    if(targetIndex == 0) return arr;
+    // Extraer las ubicaciones x, y de todos los subíndices excepto el último (average)
+    let allCoordinates = []
+
+    for(let i = 0; i < 4; i++){
+      for(let j = 0; j<3; j++){
+        allCoordinates.push({x: arr[i][j].x, y: arr[i][j].y, cir1: arr[i][j].cir1, cir2: arr[i][j].cir2})
+      }
+    }
+
+    // console.log(arr)
+    console.log(allCoordinates)
+
+    let split = (targetIndex*3)
+    // console.log(split)
+    
+    const part1 = allCoordinates.slice(split);
+    const part2 = allCoordinates.slice(0, split);
+
+    const rotatedCoordinates = part1.concat(part2);
+
+    let k = 0
+    for(let i = 0; i < 4; i++){
+      for(let j = 0; j<3; j++){
+        // console.log(arr[i][j])
+        arr[i][j].x = rotatedCoordinates[k].x
+        arr[i][j].y = rotatedCoordinates[k].y
+        arr[i][j].cir1 = rotatedCoordinates[k].cir1
+        arr[i][j].cir2 = rotatedCoordinates[k].cir2
+        // console.log(arr[i][j])
+        // allCoordinates.push({x: arr[i][j].x, y: arr[i][j].y})
+        k++
+      }
+    }
+
+    return arr;
+}
+
+  function getLocationMovement(indexDragging, IndexNearest, pivot){
+    const x1 = orbs.value[indexDragging].x
+    const y1 = orbs.value[indexDragging].y
+
+    const x2 = IndexNearest.average.x
+    const y2 = IndexNearest.average.y
+
+    let angle1 = mathStore.calculateAngle(pivot.x,pivot.y,x1,y1)
+    let angle2 = mathStore.calculateAngle(pivot.x,pivot.y,x2,y2)
+    
+    if(angle1 < 0) angle1 = angle1 + 360
+    if(angle2 < 0) angle2 = angle2 + 360
+
+    return (angle1 > angle2) ? 'left' : 'right'
+    //si el angulo arrastrado es mayor, el numero esta girando a la izquierda
+    //si el angulo arrastrado es menor, el numero esta a la derecha
+    
+  }
+  function reorderArray(arr, targetIndex, pivot) {
+    // Calcula el promedio para cada subarreglo y lo asigna
+    arr.forEach(subArray => {
+        subArray.average = mathStore.calculateAveragePoint(subArray);
+    });
+
+    // Ordena los subarreglos por el ángulo respecto al pivot
+    const sortedArr = arr.sort((a, b) => {
+        const angleA = calculateAngle(pivot, a.average);
+        const angleB = calculateAngle(pivot, b.average);
+        return angleA - angleB;
+    });
+
+    // Encuentra el índice del subarreglo que contiene el targetIndex
+    const foundIndex = sortedArr.findIndex(subArray => 
+      subArray.some(item => item.index === targetIndex)
+    );
+    // Reordena para que el primer subarreglo sea el que contiene el targetIndex
+    const part1 = sortedArr.slice(foundIndex);
+    const part2 = sortedArr.slice(0, foundIndex);
+    return part1.concat(part2);
+  }
+
+  // Función para calcular el ángulo de un punto respecto al pivot
+  function calculateAngle(pivot, point) {
+      return Math.atan2(point.y - pivot.y, point.x - pivot.x);
   }
 
   function setLocationsIfCicleChange(cicle){
@@ -77,24 +226,11 @@ export const useOrbStore = defineStore('orbs', () => {
     if(canvaStore.cicleActual != cicle){
       setBackLocations(canvaStore.cicleActual)
       canvaStore.setCicleActual(cicle)
-      console.log("es diferente")
     }
   }
 
-  function getLocationOriginal(index, path = null){
-    let pathRead = path
-    if(!pathRead){
-      pathRead = orbs.value[index].path
-    }
-    const expr = pathRead.replace(/\[(\d+)\]/g, '.$1').split('.');
-    let loc = locationsDefines.value;
-
-    for (let i = 0; i < expr.length; i++) {
-      loc = loc[expr[i]];
-    }
-    
-    return loc;
-    // console.log(locationsDefines.value.frontal[0][0])
+  function getLocationOriginal(index){
+    return {x:orbs.value[index].xOrig, y: orbs.value[index].yOrig}
   }
 
   function setIntersection(){
@@ -103,12 +239,6 @@ export const useOrbStore = defineStore('orbs', () => {
       orbs.value[i].cir2 = dataJson[i].cir2
     }
   }
-
-  function spin(circle){
-    
-  }
-
-  // console.log(locationsDefines);
   
 
     return { 
@@ -120,5 +250,6 @@ export const useOrbStore = defineStore('orbs', () => {
       setIntersection,
       setBackLocations,
       setLocationsIfCicleChange,
+      OrderOrbs,
     }
 })
