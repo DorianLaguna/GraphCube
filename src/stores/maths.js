@@ -63,6 +63,18 @@ export const useMathStore = defineStore('math', () => {
     
         return angle;
     }
+    function shortestAngleDirection(angleAct, angleOrig) {
+      // Calcula la diferencia en ambas direcciones
+      let diffClockwise = (angleOrig - angleAct + 360) % 360;
+      let diffCounterClockwise = (angleAct - angleOrig + 360) % 360;
+  
+      // Determina cuál es menor
+      if (diffClockwise <= diffCounterClockwise) {
+          return "sumar"; // Mover en el sentido de las agujas del reloj
+      } else {
+          return "restar"; // Mover en el sentido contrario a las agujas del reloj
+      }
+  }
     function calculateAngleRelative(centerX, centerY, point1X, point1Y, point2X, point2Y) {
         const delta1X = point1X - centerX;
         const delta1Y = point1Y - centerY;
@@ -202,6 +214,18 @@ export const useMathStore = defineStore('math', () => {
         return pivot;
       }
 
+      if ([3, 6, 9].includes(circle)) {
+        pivot.distance = 290
+      } else if ([2, 5, 8].includes(circle)) {
+        pivot.distance = 350
+      } else if ([1, 4, 7].includes(circle)) {
+        pivot.distance = 410
+      } else {
+        console.error("Círculo no reconocido");
+        return pivot;
+      }
+
+
       return pivot;
     }
     function sumAngleToLocation(x, y, angleRelative, pivot){
@@ -211,32 +235,25 @@ export const useMathStore = defineStore('math', () => {
       let newCoordinates = calculateCoordinates(pivot.x, pivot.y, distance, angle)
       return newCoordinates
     }
-    function cartesianToPolar(x, y, originX = 0, originY = 0) {
-        // Ajustar las coordenadas al nuevo origen
-        const adjustedX = x - originX;
-        const adjustedY = y - originY;
-        
-        // Calcular el radio
-        const r = Math.sqrt(adjustedX * adjustedX + adjustedY * adjustedY);
-        
-        // Calcular el ángulo en radianes
-        let theta = Math.atan2(adjustedY, adjustedX);
-        
-        // Convertir el ángulo a grados
-        const thetaDegrees = theta * (180 / Math.PI);
-        
-        return { r: r, theta: thetaDegrees };
+    function sortAngles(angles) {
+      // Normaliza los ángulos para asegurarse de que están en el rango [0, 360)
+      let normalizedAngles = angles.map(angle => normalizeAngle(angle));
+  
+      // Ordena los ángulos considerando la naturaleza cíclica de los ángulos
+      normalizedAngles.sort((a, b) => {
+          if (a < b && b - a <= 180) return -1;  // Si a es menor y la diferencia es menor o igual a 180, a es primero
+          if (a > b && a - b <= 180) return 1;   // Si a es mayor y la diferencia es menor o igual a 180, b es primero
+          if (a < b) return 1;                   // Si a es menor pero la diferencia es mayor de 180, b es primero
+          if (a > b) return -1;                  // Si a es mayor pero la diferencia es mayor de 180, a es primero
+          return 0;                              // Si son iguales
+      });
+  
+      return normalizedAngles;
     }
-    function polarToCartesian(r, thetaDegrees, originX = 0, originY = 0) {
-        // Convertir el ángulo de grados a radianes
-        const thetaRadians = thetaDegrees * (Math.PI / 180);
-        
-        // Calcular las coordenadas cartesianas
-        const x = originX + r * Math.cos(thetaRadians);
-        const y = originY + r * Math.sin(thetaRadians);
-        
-        return { x: x, y: y };
+    function normalizeAngle(angle) {
+      return (angle + 360) % 360;
     }
+    
   return { 
     degreesToRadians,
     radiansToDegrees,
@@ -251,6 +268,9 @@ export const useMathStore = defineStore('math', () => {
     groupAndSortByAngle,
     groupPointsInTriplets,
     calculateAveragePoint,
-    findClosestIndex
+    findClosestIndex,
+    shortestAngleDirection,
+    sortAngles,
+    normalizeAngle
   }
 })

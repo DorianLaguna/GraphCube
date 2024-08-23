@@ -73,12 +73,12 @@ export const useOrbStore = defineStore('orbs', () => {
     let locations = []
     
     indexOrbs.forEach(index => {
-      locations.push({
-        x: orbs.value[index].xOrig,
-        y: orbs.value[index].yOrig,
-        index: index,
-        distante: mathStore.calculateDistance(orbs.value[index].xOrig,orbs.value[index].yOrig, mouseX,mouseY)
-      })
+      // locations.push({
+      //   x: orbs.value[index].xOrig,
+      //   y: orbs.value[index].yOrig,
+      //   index: index,
+      //   distante: mathStore.calculateDistance(orbs.value[index].xOrig,orbs.value[index].yOrig, mouseX,mouseY)
+      // })
       values.push({
         index:index,
         x: orbs.value[index].xOrig,
@@ -88,89 +88,138 @@ export const useOrbStore = defineStore('orbs', () => {
       })
     });
     // Función para ordenar por distancia
-    locations.sort((a, b) => a.distante - b.distante);
+    // locations.sort((a, b) => a.distante - b.distante);
 
     let datos = mathStore.groupPointsInTriplets(values)
 
-    //obtener angulo promedio y crear arreglo respecto a eso
+    // Obtener ángulo promedio y crear arreglo respecto a eso
     let pivot = mathStore.getPivotFromCicle(cicle)
     let valores = reorderArray(datos, indexDragging, pivot)
-    console.log(datos)
-
     
-    let IndexNearest = mathStore.findClosestIndex(valores,{x:mouseX, y:mouseY})
+    // console.log(datos)
+    // console.log(indexDragging)
 
-    //cambiar las ubicaciones originales
-    let newCoordinates = rotateCoordinates(valores, IndexNearest)
+    let IndexNearest = mathStore.findClosestIndex(valores, { x: mouseX, y: mouseY });
 
+    // Cambiar las ubicaciones originales
+    let newCoordinates = rotateCoordinates(valores, IndexNearest);
+    // console.log(newCoordinates)
+
+    // Actualizar orbs con las nuevas coordenadas
+    const indexes = [];
     newCoordinates.forEach(subArray => {
-      subArray.forEach(orb => {
-        const indice = orb.index
-        console.log(orbs.value[indice])
-        orbs.value[indice].x = orb.x;
-        orbs.value[indice].y = orb.y;
-        orbs.value[indice].xOrig = orb.x;
-        orbs.value[indice].yOrig = orb.y;
-        orbs.value[indice].cir1 = orb.cir1;
-        orbs.value[indice].cir2 = orb.cir2;
-      })
-    })
+        subArray.forEach(orb => {
+            const indice = orb.index;
+            indexes.push(indice);
+            orbs.value[indice].xOrig = orb.x;
+            orbs.value[indice].yOrig = orb.y;
+            orbs.value[indice].cir1 = orb.cir1;
+            orbs.value[indice].cir2 = orb.cir2;
+        });
+    });
 
-    
-    // let i = 0
-    // newCoordinates.forEach(s => {
-    //   let colores = ['purple', 'red', 'green', 'black']
-    //   canvaStore.dibujarOrbe(s.average.x, s.average.y, colores[i])
-    //   i++
-    // })
+    // Animar orbs mientras se pintan
+    animateOrbs(indexes, pivot);
+}
 
-    let direction = getLocationMovement(indexDragging, valores[IndexNearest], pivot)
-
-    //girarlos mientras se pintan
-    // while(){
-
-    // }
-  
+  function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
+  async function animateOrbs(indexes, pivot) {
+    
+    while (
+      orbs.value[indexes[0]].x != orbs.value[indexes[0]].xOrig ||
+      orbs.value[indexes[1]].x != orbs.value[indexes[1]].xOrig ||
+      orbs.value[indexes[2]].x != orbs.value[indexes[2]].xOrig ||
+      orbs.value[indexes[3]].x != orbs.value[indexes[3]].xOrig ||
+      orbs.value[indexes[4]].x != orbs.value[indexes[4]].xOrig ||
+      orbs.value[indexes[5]].x != orbs.value[indexes[5]].xOrig ||
+      orbs.value[indexes[6]].x != orbs.value[indexes[6]].xOrig ||
+      orbs.value[indexes[7]].x != orbs.value[indexes[7]].xOrig ||
+      orbs.value[indexes[8]].x != orbs.value[indexes[8]].xOrig ||
+      orbs.value[indexes[9]].x != orbs.value[indexes[9]].xOrig ||
+      orbs.value[indexes[10]].x != orbs.value[indexes[10]].xOrig ||
+      orbs.value[indexes[11]].x != orbs.value[indexes[11]].xOrig
+    ) {
+      
+      indexes.forEach(indice => {
+        if(orbs.value[indice].x != orbs.value[indice].xOrig){
+          let angleAct = mathStore.calculateAngle(pivot.x, pivot.y, orbs.value[indice].x, orbs.value[indice].y)
+          let angleOrig = mathStore.calculateAngle(pivot.x, pivot.y, orbs.value[indice].xOrig, orbs.value[indice].yOrig)
+
+          if (Math.abs(angleOrig - angleAct) <= 5) {
+            // Aquí entra si la diferencia entre los ángulos es de 5 grados o menos
+            orbs.value[indice].x = orbs.value[indice].xOrig
+            orbs.value[indice].y = orbs.value[indice].yOrig
+          }else{
+            if(angleAct < 0) angleAct = angleAct + 360
+            if(angleOrig < 0) angleOrig = angleOrig + 360
+  
+            let direccion = mathStore.shortestAngleDirection(angleAct, angleOrig);
+  
+            if(direccion == 'sumar'){
+              angleAct += 1
+            }else{
+              angleAct -= 1
+            }
+            
+            let coordinates = mathStore.calculateCoordinates(pivot.x, pivot.y, pivot.distance, angleAct);
+            // console.log(coordinates)
+            orbs.value[indice].x = coordinates.x
+            orbs.value[indice].y = coordinates.y
+          }
+
+        }
+      });
+      canvaStore.dibujarOrbesAll();
+      await delay(2);
+    }
+    
+  }
+  
 
   function rotateCoordinates(arr, targetIndex) {
-    if(targetIndex == 0) return arr;
-    // Extraer las ubicaciones x, y de todos los subíndices excepto el último (average)
-    let allCoordinates = []
+    if (targetIndex == 0) return arr; // No hay rotación si el índice objetivo es 0
 
-    for(let i = 0; i < 4; i++){
-      for(let j = 0; j<3; j++){
-        allCoordinates.push({x: arr[i][j].x, y: arr[i][j].y, cir1: arr[i][j].cir1, cir2: arr[i][j].cir2})
-      }
+    // Extraer todas las ubicaciones x, y, cir1 y cir2
+    let allCoordinates = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr[i].length; j++) {
+            allCoordinates.push({
+                x: arr[i][j].x,
+                y: arr[i][j].y,
+                cir1: arr[i][j].cir1,
+                cir2: arr[i][j].cir2
+            });
+        }
     }
 
-    // console.log(arr)
-    console.log(allCoordinates)
-
-    let split = (targetIndex*3)
-    // console.log(split)
+    // Determina el punto de división
+    let totalItems = allCoordinates.length;
+    let split = (targetIndex * 3) % totalItems;
     
+    // Divide y rota las coordenadas
     const part1 = allCoordinates.slice(split);
     const part2 = allCoordinates.slice(0, split);
-
     const rotatedCoordinates = part1.concat(part2);
 
-    let k = 0
-    for(let i = 0; i < 4; i++){
-      for(let j = 0; j<3; j++){
-        // console.log(arr[i][j])
-        arr[i][j].x = rotatedCoordinates[k].x
-        arr[i][j].y = rotatedCoordinates[k].y
-        arr[i][j].cir1 = rotatedCoordinates[k].cir1
-        arr[i][j].cir2 = rotatedCoordinates[k].cir2
-        // console.log(arr[i][j])
-        // allCoordinates.push({x: arr[i][j].x, y: arr[i][j].y})
-        k++
-      }
+    // Asigna las coordenadas rotadas a arr
+    let k = 0;
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr[i].length; j++) {
+            arr[i][j].x = rotatedCoordinates[k].x;
+            arr[i][j].y = rotatedCoordinates[k].y;
+            arr[i][j].cir1 = rotatedCoordinates[k].cir1;
+            arr[i][j].cir2 = rotatedCoordinates[k].cir2;
+            k++;
+        }
     }
 
     return arr;
 }
+
+
 
   function getLocationMovement(indexDragging, IndexNearest, pivot){
     const x1 = orbs.value[indexDragging].x
@@ -198,8 +247,10 @@ export const useOrbStore = defineStore('orbs', () => {
 
     // Ordena los subarreglos por el ángulo respecto al pivot
     const sortedArr = arr.sort((a, b) => {
-        const angleA = calculateAngle(pivot, a.average);
-        const angleB = calculateAngle(pivot, b.average);
+        let angleA = calculateAngle(pivot, a.average);
+        let angleB = calculateAngle(pivot, b.average);
+        angleA = mathStore.normalizeAngle(angleA);
+        angleB = mathStore.normalizeAngle(angleB);
         return angleA - angleB;
     });
 
@@ -215,13 +266,31 @@ export const useOrbStore = defineStore('orbs', () => {
 
     // Reordenar los tres puntos dentro de su subarreglo respectivo según su ángulo
     reorderedArr.forEach(subArray => {
-        subArray.sort((a, b) => {
-            const angleA = calculateAngle(pivot, a);
-            const angleB = calculateAngle(pivot, b);
-            return angleA - angleB;
-        });
+      // Calcula los ángulos para cada punto en el subArray
+      let angles = subArray.map(point => 
+          mathStore.calculateAngle(pivot.x, pivot.y, point.x, point.y)
+      );
+  
+      // Ordena los ángulos usando la función sortAngles
+      let sortedAngles = mathStore.sortAngles(angles);
+      // console.log(sortedAngles)
+  
+      // Reorganiza subArray basado en el orden de sortedAngles
+      subArray.sort((a, b) => {
+          let angleA = mathStore.calculateAngle(pivot.x, pivot.y, a.x, a.y);
+          let angleB = mathStore.calculateAngle(pivot.x, pivot.y, b.x, b.y);
+  
+          angleA = mathStore.normalizeAngle(angleA);
+          angleB = mathStore.normalizeAngle(angleB);
+  
+          // Encuentra las posiciones en sortedAngles
+          let indexA = sortedAngles.indexOf(angleA);
+          let indexB = sortedAngles.indexOf(angleB);
+  
+          return indexA - indexB;
+      });
     });
-
+    // console.log(reorderedArr)
     return reorderedArr;
   }
 

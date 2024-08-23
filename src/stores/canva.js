@@ -175,14 +175,14 @@ export const useCanvaStore = defineStore('canva', () => {
     
     orbStore.orbs.forEach((orb, index) => {
       if (orb.cir1 === circle || orb.cir2 === circle) {
-        console.log(orb)
+        // console.log(orb)
         let location = orbStore.getLocationOriginal(index);
         let newLocation = mathStore.sumAngleToLocation(location.x, location.y, angleRelative, pivot);
         orb.x = newLocation.x;
         orb.y = newLocation.y;
       }
     });
-    console.log("termina foreach")
+    // console.log("termina foreach")
 
   }
 
@@ -253,7 +253,7 @@ export const useCanvaStore = defineStore('canva', () => {
   function finalizarArrastre() {
     if (isDragging.value) {
       orbStore.OrderOrbs(indexPointDragging.value, orbsMoving.value, cicleActual.value, xMouse.value,yMouse.value);
-      dibujarOrbesAll()
+      // dibujarOrbesAll()
     }
     isDragging.value = false;
     pivots.value = [];
@@ -271,5 +271,6 @@ export const useCanvaStore = defineStore('canva', () => {
     setCicleActual,
     dibujarOrbesAll,
     dibujarOrbe,
+    findPivot
   }
 })
