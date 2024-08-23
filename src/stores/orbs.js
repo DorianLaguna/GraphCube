@@ -207,11 +207,24 @@ export const useOrbStore = defineStore('orbs', () => {
     const foundIndex = sortedArr.findIndex(subArray => 
       subArray.some(item => item.index === targetIndex)
     );
+
     // Reordena para que el primer subarreglo sea el que contiene el targetIndex
     const part1 = sortedArr.slice(foundIndex);
     const part2 = sortedArr.slice(0, foundIndex);
-    return part1.concat(part2);
+    const reorderedArr = part1.concat(part2);
+
+    // Reordenar los tres puntos dentro de su subarreglo respectivo según su ángulo
+    reorderedArr.forEach(subArray => {
+        subArray.sort((a, b) => {
+            const angleA = calculateAngle(pivot, a);
+            const angleB = calculateAngle(pivot, b);
+            return angleA - angleB;
+        });
+    });
+
+    return reorderedArr;
   }
+
 
   // Función para calcular el ángulo de un punto respecto al pivot
   function calculateAngle(pivot, point) {
