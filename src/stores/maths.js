@@ -228,6 +228,26 @@ export const useMathStore = defineStore('math', () => {
 
       return pivot;
     }
+
+    function getSecundaryOrbs(circle){
+      let ubications = []
+      if(circle == 1){
+        ubications = [{ x: 191, y: 419}, { x: 257, y: 382,}, { x: 325, y: 358,}, { x: 311, y: 425,}, { x: 312, y: 489,}, { x: 256, y: 520,}, { x: 205, y: 566,}, { x: 192, y: 494,}]
+      }else if(circle == 3){
+        ubications = [{ x: 814, y: 642}, { x: 827, y: 713,}, { x: 828, y: 788,}, { x: 762, y: 825,}, { x: 694, y: 850,}, { x: 708, y: 783,}, { x: 707, y: 719,}, { x: 763, y: 687,}];
+      }else if(circle == 4){
+        ubications = [{ x: 1008, y:419}, { x: 1007, y: 494,}, { x: 994, y: 566,}, { x: 943, y: 520,}, { x: 887, y: 489,}, { x: 888, y: 425,}, { x: 874, y: 358,}, { x: 942, y: 382,}];
+      }else if(circle == 6){
+        ubications = [{ x: 386, y: 642}, { x: 436, y: 687,}, { x: 492, y: 719,}, { x: 491, y: 783,}, { x: 505, y: 850,}, { x: 437, y: 825,}, { x: 371, y: 788,}, { x: 372, y: 713,}];
+      }else if(circle == 7){
+        ubications = [{ x: 480, y: 1043}, { x: 545, y: 1022,}, { x: 600, y: 990,}, { x: 655, y: 1022,}, { x: 720, y: 1043,}, { x: 665, y: 1091,}, { x: 600, y: 1129,}, { x: 535, y: 1091,}];
+      }else if(circle == 9){
+        ubications = [{ x: 600, y: 390}, { x: 665, y: 428,}, { x: 720, y: 476,}, { x: 655, y: 497,}, { x: 600, y: 530,}, { x: 545, y: 497,}, { x: 480, y: 476,}, { x: 535, y: 428,}];
+      }
+
+      return ubications;
+
+    }
     function sumAngleToLocation(x, y, angleRelative, pivot){
       let angle = calculateAngle(pivot.x, pivot.y, x, y)
       angle += angleRelative;
@@ -271,6 +291,7 @@ export const useMathStore = defineStore('math', () => {
     findClosestIndex,
     shortestAngleDirection,
     sortAngles,
-    normalizeAngle
+    normalizeAngle,
+    getSecundaryOrbs
   }
 })
