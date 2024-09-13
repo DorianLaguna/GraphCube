@@ -43,7 +43,7 @@
     const loader = new GLTFLoader();
   
     // Cargar modelo GLTF
-    loader.load('src/models/cube.glb', function (gltf) {
+    loader.load('/models/cube.glb', function (gltf) {
       const model = gltf.scene;
       model.position.set(-1, -3, 0);
       scene.add(model);
