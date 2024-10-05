@@ -3,11 +3,13 @@ import { defineStore } from 'pinia'
 import dataJson from "@/intersection.json"
 import { useCanvaStore } from './canva';
 import { useMathStore } from './maths';
+import { useSceneStore } from './scene';
 
 export const useOrbStore = defineStore('orbs', () => {
 
   const canvaStore = useCanvaStore()
   const mathStore = useMathStore();
+  const sceneStore = useSceneStore();
     
   const locationsDefines = ref(null)
   locationsDefines.value = {
@@ -113,6 +115,8 @@ export const useOrbStore = defineStore('orbs', () => {
 
     // Animar orbs mientras se pintan
     animateOrbs(indexes, pivot);
+
+    sceneStore.rotateCube(cicle, positionsMoved)
 
     if([1,3,4,6,7,9].includes(cicle) && positionsMoved > 0){
       await rotateSecundaryOrbs(positionsMoved, cicle)

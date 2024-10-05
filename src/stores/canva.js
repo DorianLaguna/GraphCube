@@ -245,10 +245,6 @@ export const useCanvaStore = defineStore('canva', () => {
     return indexes;
   }
 
-  function defineLocationOrbs(){
-
-  }
-
   // Función para manejar el fin del arrastre
   function finalizarArrastre() {
     if (isDragging.value) {
