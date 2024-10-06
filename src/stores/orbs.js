@@ -243,7 +243,7 @@ async function rotateSecundaryOrbs(positionsMoved, circle){
         }
       });
       canvaStore.dibujarOrbesAll();
-      await delay(2);
+      await delay(1);
     }
     
   }

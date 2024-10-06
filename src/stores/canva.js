@@ -47,11 +47,21 @@ export const useCanvaStore = defineStore('canva', () => {
     canvas.value.addEventListener('mousedown', iniciarArrastre);
     canvas.value.addEventListener('mousemove', moverCirculo);
     canvas.value.addEventListener('mouseup', finalizarArrastre);
-
     // Eventos táctiles
     canvas.value.addEventListener('touchstart', iniciarArrastre);
     canvas.value.addEventListener('touchmove', moverCirculo);
     canvas.value.addEventListener('touchend', finalizarArrastre);
+  }
+
+  function deleteEvents(){
+    // Eliminar eventos del mouse
+    canvas.value.removeEventListener('mousedown', iniciarArrastre);
+    canvas.value.removeEventListener('mousemove', moverCirculo);
+    canvas.value.removeEventListener('mouseup', finalizarArrastre);
+    // Eliminar eventos táctiles
+    canvas.value.removeEventListener('touchstart', iniciarArrastre);
+    canvas.value.removeEventListener('touchmove', moverCirculo);
+    canvas.value.removeEventListener('touchend', finalizarArrastre);
   }
 
   function dibujarOrbita(x, y, radio) {
@@ -255,7 +265,6 @@ export const useCanvaStore = defineStore('canva', () => {
     pivots.value = [];
     orbsMoving.value = null;
     cicleActual.value = null;
-    console.log("Fin del arrastre");
   }
 
   return { 
