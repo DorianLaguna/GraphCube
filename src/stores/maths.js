@@ -363,12 +363,12 @@ export const useMathStore = defineStore("math", () => {
             { x: 2, y: 2, z: -2 },
             { x: 2, y: 0, z: -2 },
             { x: 2, y: -2, z: -2 },
-            { x: 2, y: 2, z: 0 },
-            { x: 2, y: 0, z: 0 },
             { x: 2, y: -2, z: 0 },
-            { x: 2, y: 2, z: 2 },
-            { x: 2, y: 0, z: 2 },
             { x: 2, y: -2, z: 2 },
+            { x: 2, y: 0, z: 2 },
+            { x: 2, y: 2, z: 2 },
+            { x: 2, y: 2, z: 0 },
+            { x: 2, y: 0, z: 0, noMove:true },
           ],
         };
         break;
@@ -379,11 +379,11 @@ export const useMathStore = defineStore("math", () => {
             {x: 0, y: 2, z: -2},
             {x: 0, y: 0, z: -2},
             {x: 0, y: -2, z: -2},
-            {x: 0, y: 2, z: 0},
             {x: 0, y: -2, z: 0},
-            { x: 0, y: 2, z: 2},
-            {x: 0, y: 0, z: 2},
             {x: 0, y: -2, z: 2},
+            {x: 0, y: 0, z: 2},
+            { x: 0, y: 2, z: 2},
+            {x: 0, y: 2, z: 0},
           ]
         };
 
@@ -395,12 +395,14 @@ export const useMathStore = defineStore("math", () => {
             {x: -2, y: 2,  z: -2},
             {x: -2, y: 0,  z: -2},
             {x: -2, y: -2, z: -2},
-            {x: -2, y: 2,  z: 0},
-            {x: -2, y: 0,  z: 0},
+
             {x: -2, y: -2, z: 0},
-            {x: -2, y: 2,  z: 2},
-            {x: -2, y: 0,  z: 2},
+            
             {x: -2, y: -2, z: 2},
+            {x: -2, y: 0,  z: 2},
+            {x: -2, y: 2,  z: 2},
+            {x: -2, y: 2,  z: 0},
+            {x: -2, y: 0,  z: 0, noMove:true },
           ]
         };
 
@@ -412,12 +414,14 @@ export const useMathStore = defineStore("math", () => {
             {x: 2, y: 2, z: -2},
             { x: 0, y: 2, z: -2},
             {x: -2, y: 2, z: -2},
-            {x: 2, y: 2, z: 0},
-            {x: 0, y: 2, z: 0},
+
             {x: -2, y: 2, z: 0},
-            {x: 0, y: 2, z: 2},
+            {x: 2, y: 2, z: 2},
+            
             {x: -2, y: 2, z: 2},
-            {x: 2, y: 2, z: 2}
+            {x: 0, y: 2, z: 2},
+            {x: 2, y: 2, z: 0},
+            {x: 0, y: 2, z: 0, noMove:true},
           ]
         };
 
@@ -429,11 +433,11 @@ export const useMathStore = defineStore("math", () => {
             {x: 2, y: 0, z: -2},
             {x: 0, y: 0, z: -2},
             {x: -2, y: 0, z: -2},
-            {x: 2, y: 0, z: 0},
             {x: -2, y: 0, z: 0},
-            {x: 2, y: 0, z: 2},
-            {x: 0, y: 0, z: 2},
             {x: -2, y: 0, z: 2},
+            {x: 0, y: 0, z: 2},
+            {x: 2, y: 0, z: 2},
+            {x: 2, y: 0, z: 0},
           ]
         };
 
@@ -445,12 +449,15 @@ export const useMathStore = defineStore("math", () => {
             {x: 2, y: -2, z: -2},
             {x: 0, y: -2, z: -2},
             {x: -2, y: -2, z: -2},
-            {x: 2, y: -2, z: 0},
-            {x: 0, y: -2, z: 0},
+
             {x: -2, y: -2, z: 0},
-            {x: 2, y: -2, z: 2},
-            {x: 0, y: -2, z: 2},
+            
             {x: -2, y: -2, z: 2},
+            {x: 0, y: -2, z: 2},
+            {x: 2, y: -2, z: 2},
+            
+            {x: 2, y: -2, z: 0},
+            {x: 0, y: -2, z: 0, noMove:true },
           ]
         };
 
@@ -462,12 +469,15 @@ export const useMathStore = defineStore("math", () => {
             {x: 2, y: 2, z: 2},
             {x: 0, y: 2, z: 2},
             {x: -2, y: 2, z: 2},
-            {x: 2, y: 0, z: 2},
-            {x: 0, y: 0, z: 2},
+
             {x: -2, y: 0, z: 2},
-            {x: 2, y: -2, z: 2},
-            {x: 0, y: -2, z: 2},
+            
             {x: -2, y: -2, z: 2},
+            {x: 0, y: -2, z: 2},
+            {x: 2, y: -2, z: 2},
+            
+            {x: 2, y: 0, z: 2},
+            {x: 0, y: 0, z: 2, noMove:true },
           ]
         };
 
@@ -479,11 +489,11 @@ export const useMathStore = defineStore("math", () => {
             {x: 2, y: 2, z: 0},
             {x: 0, y: 2, z: 0},
             {x: -2, y: 2, z: 0},
-            {x: 2, y: 0, z: 0},
             {x: -2, y: 0, z: 0},
-            {x: 2, y: -2, z: 0},
+            {x: -2, y: -2, z: 0},
             {x: 0, y: -2, z: 0},
-            {x: -2, y: -2, z: 0}
+            {x: 2, y: -2, z: 0},
+            {x: 2, y: 0, z: 0},
           ]
         };
         break;
@@ -494,12 +504,12 @@ export const useMathStore = defineStore("math", () => {
             {x: 2, y: 2, z: -2},
             {x: 0, y: 2, z: -2},
             {x: -2, y: 2, z: -2},
-            { x: 2, y: 0, z: -2},
-            {x: 0, y: 0, z: -2},
             {x: -2, y: 0, z: -2},
-            {x: 2, y: -2, z: -2},
-            {x: 0, y: -2, z: -2},
             {x: -2, y: -2, z: -2},
+            {x: 0, y: -2, z: -2},
+            {x: 2, y: -2, z: -2},
+            { x: 2, y: 0, z: -2},
+            {x: 0, y: 0, z: -2,  noMove:true},
           ]
         };
         break;

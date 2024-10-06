@@ -8,24 +8,6 @@ export const useSceneStore = defineStore('scene', () => {
     const cubos = ref([])
     const mathStore = useMathStore();
 
-    const nameCubes = ref([
-
-        {name:"cube000", x: 2, y: 2, z: -2}, {name:"cube100", x: 0, y: 2, z: -2}, {name:"cube200", x: -2, y: 2, z: -2},
-        {name:"cube010", x: 2, y: 0, z: -2}, {name:"cube110", x: 0, y: 0, z: -2}, {name:"cube210", x: -2, y: 0, z: -2},
-        {name:"cube020", x: 2, y: -2, z: -2},{name:"cube120", x: 0, y: -2, z: -2}, {name:"cube220", x: -2, y: -2, z: -2},
-  
-        {name:"cube001", x: 2, y: 2, z: 0}, {name:"cube101", x: 0, y: 2, z: 0}, {name:"cube201", x: -2, y: 2, z: 0},
-        {name:"cube011", x: 2, y: 0, z: 0},                                      {name:"cube211", x: -2, y: 0, z: 0},
-        {name:"cube021", x: 2, y: -2, z: 0},{name:"cube121", x: 0, y: -2, z: 0}, {name:"cube221", x: -2, y: -2, z: 0},
-  
-        {name:"cube002", x: 2, y: 2, z: 2}, {name:"cube102", x: 0, y: 2, z: 2}, {name:"cube202", x: -2, y: 2, z: 2},
-        {name:"cube012", x: 2, y: 0, z: 2}, {name:"cube112", x: 0, y: 0, z: 2}, {name:"cube212", x: -2, y: 0, z: 2},
-        {name:"cube022", x: 2, y: -2, z: 2},{name:"cube122", x: 0, y: -2, z: 2}, {name:"cube222", x: -2, y: -2, z: 2},
-        
-        // {name:"centro", x:0 , y: 0, z: 0}, 
-      
-    ]);
-
     function setVal(obj){
         scene.value = obj
     }
@@ -64,47 +46,27 @@ export const useSceneStore = defineStore('scene', () => {
         const numberOfSteps = 60; 
         // Calcular el incremento por iteración
         const rotationIncrement = rotationDifference / numberOfSteps;
+        let rotation
         
         // Aplicar la rotación en el bucle
         for (let i = 0; i < numberOfSteps; i++) {
             if(positionsMoved == 3){
                 groupCubes.rotation[locations.eje] -= rotationIncrement
+                rotation = -rotationDifference
             }else{
                 groupCubes.rotation[locations.eje] += rotationIncrement; // Incrementar la rotación
+                rotation = rotationDifference
             }
             await delay(10); // Esperar un poco antes de la siguiente rotación
         }
-        
-        // Asegúrate de que se actualicen las matrices de transformación
-        // groupCubes.updateMatrixWorld(true);
 
-        // groupCubes.rotation.x = (Math.PI / 2);
+        // Iteramos sobre los cubos que queremos rotar
+        for(let i = 0; i<4; i++){
 
-        // Añadir el grupo a la escena principal
-        // scene.scene.add(groupCubes);
-
-
-            for(let i = 0; i<9; i++){
-                scene.value.add(groupCubes.children[0])
-            }
-
-            // groupCubes.children.forEach(cubito => {
-            //   // Remover el cubo del groupCubes
-            // //   groupCubes.remove(cubito);
-              
-            //   // Devolver el cubo a la escena principal (con la nueva posición y rotación)
-            //   scene.value.add(cubito);
-            // });
-          
-            // Opcional: Eliminar el grupo si ya no es necesario
-            // scene.value.remove(groupCubes);
-
-        // for(let i = 0; i<60; i++){
-            
-        //     groupCubes.rotation.x += 0.05
-            
-        //     await delay(10)
-        // }
+            groupCubes.children.forEach(cube => {
+                scene.value.attach(cube);
+            });
+        }
     }
 
     function delay(ms) {

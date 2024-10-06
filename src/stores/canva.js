@@ -81,7 +81,7 @@ export const useCanvaStore = defineStore('canva', () => {
   }
 
   function dibujarOrbesAllStart() {
-    const colors = ["red", "orange", "white", "yellow", "blue", "green"];
+    const colors = ["red", "orange", "white", "yellow", "blue", "#42ff33"];
     let i = 0;
     Object.entries(orbStore.locationsDefines).forEach(([caraName, cara]) => {
       let color = colors[i];

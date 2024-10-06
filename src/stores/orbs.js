@@ -116,7 +116,9 @@ export const useOrbStore = defineStore('orbs', () => {
     // Animar orbs mientras se pintan
     animateOrbs(indexes, pivot);
 
-    sceneStore.rotateCube(cicle, positionsMoved)
+    if(positionsMoved > 0){
+      sceneStore.rotateCube(cicle, positionsMoved)
+    }
 
     if([1,3,4,6,7,9].includes(cicle) && positionsMoved > 0){
       await rotateSecundaryOrbs(positionsMoved, cicle)
