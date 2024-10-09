@@ -64,11 +64,11 @@ export const useCanvaStore = defineStore('canva', () => {
     canvas.value.removeEventListener('touchend', finalizarArrastre);
   }
 
-  function dibujarOrbita(x, y, radio) {
+  function dibujarOrbita(x, y, radio, color = '#0284c7') {
     ctx.value.beginPath();
     ctx.value.arc(x, y, radio, 0, 2 * pi);
-    ctx.value.lineWidth = 7;
-    ctx.value.strokeStyle = 'gray';
+    ctx.value.lineWidth = 10;
+    ctx.value.strokeStyle = color;
     ctx.value.stroke();
   }
 
@@ -82,16 +82,19 @@ export const useCanvaStore = defineStore('canva', () => {
     }
   }
 
-  function dibujarOrbesAll() {
+  function dibujarOrbesAll(circle = null) {
     ctx.value.clearRect(0, 0, canvas.value.width, canvas.value.height);
     dibujaOrbitas();
+    if(circle){
+      dibujarOrbita(circle.x, circle.y, circle.distance, '#cffafe')
+    }
     orbStore.orbs.forEach((punto) => {
       dibujarOrbe(punto.x, punto.y, punto.color);
     });
   }
 
   function dibujarOrbesAllStart() {
-    const colors = ["red", "orange", "white", "yellow", "blue", "#42ff33"];
+    const colors = ["red", "orange", "white", "yellow", "#22d3ee", "#42ff33"];
     let i = 0;
     Object.entries(orbStore.locationsDefines).forEach(([caraName, cara]) => {
       let color = colors[i];
@@ -241,7 +244,7 @@ export const useCanvaStore = defineStore('canva', () => {
       orbStore.orbs[indexPointDragging.value].y = coordinates.y;
       orbStore.orbs[indexPointDragging.value].x = coordinates.x;
 
-      dibujarOrbesAll();
+      dibujarOrbesAll(mathStore.getPivotFromCicle(circle));
     }
   }
 

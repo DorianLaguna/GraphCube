@@ -14,7 +14,7 @@
 </script>
 
 <template>
-    <div class="flex flex-col justify-center bg-gray-300 2xl:w-10/12">
+    <div class="flex flex-col justify-center bg-indigo-950 2xl:w-10/12">
         <canvas id="canvasField" width="1200" height="1200" class="w-full"></canvas>
     </div>
 </template>

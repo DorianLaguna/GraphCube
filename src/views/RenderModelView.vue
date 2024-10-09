@@ -13,7 +13,7 @@
   const colorMaterials = ref({
     'yellow': new THREE.MeshBasicMaterial({ color: 0xffff00 }), // Amarillo
     'green': new THREE.MeshBasicMaterial({ color: '#42ff33' }),  // Verde
-    'blue': new THREE.MeshBasicMaterial({ color: 0x0000ff }),   // Azul Marino
+    'blue': new THREE.MeshBasicMaterial({ color: '#22d3ee' }),   // Azul Marino
     'white': new THREE.MeshBasicMaterial({ color: 0xffffff }),  // Blanco
     'orange': new THREE.MeshBasicMaterial({ color: 0xffa500 }), // Naranja
     'red': new THREE.MeshBasicMaterial({ color: 0xff0000 }),    // Rojo
@@ -23,7 +23,7 @@
   onMounted(() => {
     const sceneObject = new THREE.Scene();
     scene.setVal(sceneObject)
-    scene.scene.background = new THREE.Color('rgb(178,201,158)');
+    scene.scene.background = new THREE.Color('#1e1b4b');
 
     const camera = new THREE.PerspectiveCamera(50, modelo.value.clientWidth / modelo.value.clientHeight, 1, 1000);
 
@@ -94,7 +94,7 @@
 
     //setear controles
     const controls = new OrbitControls(camera, renderer.value.domElement);
-    camera.position.set(8, 6, 8);
+    camera.position.set(8, 6, -8);
     camera.lookAt(0, 0, 0);
 
     function animate() {
@@ -118,14 +118,11 @@
     };
     window.addEventListener('resize', handleResize);
 
-    onUnmounted(() => {
-      // window.removeEventListener('resize', handleResize);
-    });
   });
 </script>
 
 <template>
-    <div id="modelo" ref="modelo" class=" h-96">
+    <div id="modelo" ref="modelo" class=" h-56 md:h-96 2xl:h-10/12">
       
     </div>
 </template>
