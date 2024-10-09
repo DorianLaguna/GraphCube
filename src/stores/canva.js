@@ -110,7 +110,7 @@ export const useCanvaStore = defineStore('canva', () => {
   function dibujarOrbe(x, y, color) {
     ctx.value.beginPath();
     ctx.value.arc(x, y, 5, 0, 2 * pi);
-    ctx.value.lineWidth = 20;
+    ctx.value.lineWidth = 28;
     ctx.value.strokeStyle = color;
     ctx.value.fillStyle = color;
     ctx.value.fill();
@@ -256,10 +256,15 @@ export const useCanvaStore = defineStore('canva', () => {
   }
 
   // Función para manejar el fin del arrastre
-  function finalizarArrastre() {
+  async function finalizarArrastre() {
     if (isDragging.value) {
-      orbStore.OrderOrbs(indexPointDragging.value, orbsMoving.value, cicleActual.value, xMouse.value,yMouse.value);
-      // dibujarOrbesAll()
+      deleteEvents()
+      
+      orbStore.OrderOrbs(indexPointDragging.value, orbsMoving.value, cicleActual.value, xMouse.value,yMouse.value)
+      .then(() => {
+        
+        iniciarEventos()
+      });
     }
     isDragging.value = false;
     pivots.value = [];

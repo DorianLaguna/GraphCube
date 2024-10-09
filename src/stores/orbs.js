@@ -52,7 +52,7 @@ export const useOrbStore = defineStore('orbs', () => {
   }
 
   const inRange = (x, y) => {
-    const ran = 20;
+    const ran = 40;
     return orbs.value.findIndex(point => {
       return (
         x >= point.x - ran && x <= point.x + ran &&
@@ -88,17 +88,11 @@ export const useOrbStore = defineStore('orbs', () => {
     // Obtener ángulo promedio y crear arreglo respecto a eso
     let pivot = mathStore.getPivotFromCicle(cicle)
     let valores = reorderArray(datos, indexDragging, pivot)
-    
-    // console.log(datos)
-    // console.log(indexDragging)
 
     let IndexNearest = mathStore.findClosestIndex(valores, { x: mouseX, y: mouseY });
 
     // Cambiar las ubicaciones originales
     let { arr: newCoordinates, positionsMoved } = rotateCoordinates(valores, IndexNearest);
-    // console.log('position ',positionsMoved)
-
-    
 
     // Actualizar orbs con las nuevas coordenadas
     const indexes = [];
@@ -112,17 +106,18 @@ export const useOrbStore = defineStore('orbs', () => {
             orbs.value[indice].cir2 = orb.cir2;
         });
     });
-
-    // Animar orbs mientras se pintan
-    animateOrbs(indexes, pivot);
-
     if(positionsMoved > 0){
       sceneStore.rotateCube(cicle, positionsMoved)
     }
 
     if([1,3,4,6,7,9].includes(cicle) && positionsMoved > 0){
-      await rotateSecundaryOrbs(positionsMoved, cicle)
+      rotateSecundaryOrbs(positionsMoved, cicle)
     }
+
+    // Animar orbs mientras se pintan
+    await animateOrbs(indexes, pivot);
+
+    return Promise.resolve("Datos obtenidos");
 }
 
 async function rotateSecundaryOrbs(positionsMoved, circle){
@@ -244,10 +239,8 @@ async function rotateSecundaryOrbs(positionsMoved, circle){
       });
       canvaStore.dibujarOrbesAll();
       await delay(1);
-    }
-    
-  }
-  
+    }    
+  }  
 
   function rotateCoordinates(arr, targetIndex) {
     if (targetIndex == 0) return { arr, positionsMoved: 0 };; // No hay rotación si el índice objetivo es 0
