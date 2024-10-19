@@ -9,7 +9,7 @@ This project is an interactive simulation of a 3D Rubik's Cube using Three.js an
 ## ⚙️ Project Setup
 
 ### 1. Clone the repository:
-    $ git clone https://github.com/usuario/cubo-rubik.git
+    $ git clone https://github.com/DorianLaguna/GraphCube.git
 
 ### 2. Navigate to the project directory:
     cd cubo-rubik
