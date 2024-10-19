@@ -1,29 +1,37 @@
 # GraphCube
 
-This template should help get you started developing with Vue 3 in Vite.
+## 🚀 Demo
+Check out the live version of the project [here](https://rubikgraph.dev-dorian-laguna.com/)
 
-## Recommended IDE Setup
+This project is an interactive simulation of a 3D Rubik's Cube using Three.js and Vue.js. It allows users to manipulate the cube and see the movements reflected in a graph, visualizing each twist and move in real time.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-## Customize configuration
+## ⚙️ Project Setup
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+### 1. Clone the repository:
+    $ git clone https://github.com/usuario/cubo-rubik.git
 
-## Project Setup
+### 2. Navigate to the project directory:
+    cd cubo-rubik
 
-```sh
-npm install
-```
+### 3. Install dependencies:
+    npm install
+    
+### 4. Run the project:
+    npm run serve
+    
+This will start a local development server, and the project will be available at http://localhost:5173/.
 
-### Compile and Hot-Reload for Development
+## 🕹️ How to Use
+- __Rotate the Cube:__ Click and drag the cube with your mouse to rotate it in any direction.
+- __Make Moves:__ Click and drag points to simulate specific cube movements.
+- __Track Movements:__ The cube is updated at each move reflecting the movement of the graphs, providing a clear visualization of the cube's current state.
 
-```sh
-npm run dev
-```
+## 🔧 Future Improvements
+### Some features currently under consideration for future development include:
+- Saving and Loading Cube States: Allow users to save their progress.
 
-### Compile and Minify for Production
+## 💡 Contributing
+Contributions are welcome! If you have suggestions for new features, find bugs, or want to improve the code, feel free to create a pull request or open an issue.
 
-```sh
-npm run build
-```
+Autor: Dorian Laguna :D
