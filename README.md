@@ -5,6 +5,7 @@ Check out the live version of the project [here](https://rubikgraph.dev-dorian-l
 
 This project is an interactive simulation of a 3D Rubik's Cube using Three.js and Vue.js. It allows users to manipulate the cube and see the movements reflected in a graph, visualizing each twist and move in real time.
 
+![Image project](https://github.com/DorianLaguna/GraphCube/blob/main/GraphCube.png)
 
 ## ⚙️ Project Setup
 
@@ -12,7 +13,7 @@ This project is an interactive simulation of a 3D Rubik's Cube using Three.js an
     $ git clone https://github.com/DorianLaguna/GraphCube.git
 
 ### 2. Navigate to the project directory:
-    cd cubo-rubik
+    cd GraphCube
 
 ### 3. Install dependencies:
     npm install
